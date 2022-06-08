@@ -6,11 +6,16 @@ public class CameraController : MonoBehaviour
 {
 
     [SerializeField]
-    private Rigidbody _camRB;
+    private float _height = 1.6f;
     [SerializeField]
     private float _speed;
     [SerializeField]
     private float _sprintMultiplier;
+    
+    [SerializeField]
+    private Rigidbody _camRB;
+    [SerializeField]
+    private CapsuleCollider _camCol;
 
     private Camera _camera;
 
@@ -24,6 +29,7 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         var speed = _speed;
+        var heightPos = transform.position + Vector3.up * _height;
         if (Input.GetButton("Fire3"))
             speed *= _sprintMultiplier;
 
@@ -34,10 +40,21 @@ public class CameraController : MonoBehaviour
         
         var direction = (Input.GetAxis("Vertical") * forward.normalized) + (Input.GetAxis("Horizontal") * right.normalized);
         var newPosition = _camRB.position += speed * direction.normalized * Time.deltaTime;
+
+        var ray = new Ray(_camRB.transform.position, direction.normalized);
+        var distanceToMove = Vector3.Distance(_camRB.position, newPosition);
+        RaycastHit rh;
+
+        if (Physics.Raycast(ray, out rh) && rh.distance < distanceToMove)
+        {
+
+        }
+
+       
         _camRB.MovePosition(newPosition);
 
-        Debug.DrawLine(_camera.transform.position, _camera.transform.position + forward, Color.red);
-        Debug.DrawLine(_camera.transform.position, _camera.transform.position + right, Color.blue);
-        Debug.DrawLine(_camera.transform.position, _camera.transform.position + direction.normalized, Color.cyan);
+        Debug.DrawLine(heightPos, heightPos + forward, Color.red);
+        Debug.DrawLine(heightPos, heightPos + right, Color.blue);
+        Debug.DrawLine(heightPos, heightPos + direction.normalized, Color.cyan);
     }
 }
