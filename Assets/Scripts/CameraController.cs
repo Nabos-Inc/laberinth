@@ -23,9 +23,10 @@ public class CameraController : MonoBehaviour
     private Camera _camera;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _camera = Camera.main;
+        Locator.ProvideCameraController(this);
     }
 
     // Update is called once per frame
@@ -48,24 +49,8 @@ public class CameraController : MonoBehaviour
         {
             var ray = new Ray(_camRB.transform.position, direction);
             Debug.DrawRay(ray.origin, ray.direction, Color.cyan);
-            
             var distanceToMove = speed * Time.deltaTime;
-
             Vector3 newPosition = ray.GetPoint(distanceToMove);
-            //RaycastHit rh;
-
-
-            //if (Physics.Raycast(ray, out rh, distanceToMove, _obstacleMask.value) && (rh.distance - _radius) < distanceToMove)
-            //{
-            //    newPosition = ray.GetPoint(rh.distance - _radius);
-            //    Debug.Log("A");
-            //}
-            //else
-            //{
-            //    newPosition = ray.GetPoint(distanceToMove);
-            //    Debug.Log("B");
-            //}
-
             _camRB.MovePosition(newPosition);
         }
 
