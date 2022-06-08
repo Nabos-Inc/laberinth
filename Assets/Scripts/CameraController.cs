@@ -8,6 +8,8 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float _height = 1.6f;
     [SerializeField]
+    private float _radius = .5f;
+    [SerializeField]
     private float _speed;
     [SerializeField]
     private float _sprintMultiplier;
@@ -39,22 +41,33 @@ public class CameraController : MonoBehaviour
         right = new Vector3(right.x, 0, right.z);
         
         var direction = (Input.GetAxis("Vertical") * forward.normalized) + (Input.GetAxis("Horizontal") * right.normalized);
-        var newPosition = _camRB.position += speed * direction.normalized * Time.deltaTime;
+        direction = direction.normalized;
 
-        var ray = new Ray(_camRB.transform.position, direction.normalized);
-        var distanceToMove = Vector3.Distance(_camRB.position, newPosition);
-        RaycastHit rh;
-
-        if (Physics.Raycast(ray, out rh) && rh.distance < distanceToMove)
+        if (direction.sqrMagnitude > 0)
         {
+            var ray = new Ray(_camRB.transform.position, direction);
+            Debug.DrawRay(ray.origin, ray.direction, Color.cyan);
+            
+            var distanceToMove = speed * Time.deltaTime;
+            Vector3 newPosition;
+            RaycastHit rh;
 
+
+            if (Physics.Raycast(ray, out rh) && (rh.distance - _radius) < distanceToMove)
+            {
+                newPosition = ray.GetPoint(rh.distance - _radius);
+                Debug.Log("A");
+            }
+            else
+            {
+                newPosition = ray.GetPoint(distanceToMove);
+                Debug.Log("B");
+            }
+
+            _camRB.MovePosition(newPosition);
         }
-
-       
-        _camRB.MovePosition(newPosition);
 
         Debug.DrawLine(heightPos, heightPos + forward, Color.red);
         Debug.DrawLine(heightPos, heightPos + right, Color.blue);
-        Debug.DrawLine(heightPos, heightPos + direction.normalized, Color.cyan);
     }
 }
