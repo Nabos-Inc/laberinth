@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-
+    [SerializeField]
+    private LayerMask _obstacleMask;
     [SerializeField]
     private float _height = 1.6f;
     [SerializeField]
@@ -49,20 +50,21 @@ public class CameraController : MonoBehaviour
             Debug.DrawRay(ray.origin, ray.direction, Color.cyan);
             
             var distanceToMove = speed * Time.deltaTime;
-            Vector3 newPosition;
-            RaycastHit rh;
+
+            Vector3 newPosition = ray.GetPoint(distanceToMove);
+            //RaycastHit rh;
 
 
-            if (Physics.Raycast(ray, out rh) && (rh.distance - _radius) < distanceToMove)
-            {
-                newPosition = ray.GetPoint(rh.distance - _radius);
-                Debug.Log("A");
-            }
-            else
-            {
-                newPosition = ray.GetPoint(distanceToMove);
-                Debug.Log("B");
-            }
+            //if (Physics.Raycast(ray, out rh, distanceToMove, _obstacleMask.value) && (rh.distance - _radius) < distanceToMove)
+            //{
+            //    newPosition = ray.GetPoint(rh.distance - _radius);
+            //    Debug.Log("A");
+            //}
+            //else
+            //{
+            //    newPosition = ray.GetPoint(distanceToMove);
+            //    Debug.Log("B");
+            //}
 
             _camRB.MovePosition(newPosition);
         }
